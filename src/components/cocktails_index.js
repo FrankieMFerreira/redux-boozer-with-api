@@ -1,27 +1,35 @@
 import React from 'react';
 import {connect} from 'react-redux';
+import {currentCocktail} from '../actions/index'
 
-function CocktailsIndex (props) {
-  const renderCocktails = (cocktail) => {
+class CocktailsIndex extends React.Component {
+
+
+  handleClick(cocktailID){
+    this.props.currentCocktail(cocktailID)
+  }
+
+   renderCocktail(cocktail) {
     return (<li key={cocktail.id}>
-      <Link to={`/cocktails/${cocktail.id}`}>
+      <a to={`/cocktails/${cocktail.id}`} onClick={this.handleClick.bind(this, cocktail.id)}>
         {cocktail.name}
-      </Link>
+      </a>
     </li>)
   }
 
+  render(){
   return (
   <div>
     <div className='col-md-4'>
       <ul>
-        {props.cocktails.map(renderCocktails)}
+        {this.props.cocktails.map(this.renderCocktail.bind(this))}
       </ul>
     </div>
     <div className='col-md-8'>
-      {props.children}
+      {this.props.children}
     </div>
   </div>
-)
+)}
 };
 
 function mapStateToProps(state){
@@ -30,5 +38,13 @@ function mapStateToProps(state){
   }
 }
 
-const componentCreator = connect(mapStateToProps)
-export default componentCreator(CocktailsIndex);
+function mapDispatchToProps(dispatch){
+  return {
+    currentCocktail: function(id){
+      let action = currentCocktail(id)
+      dispatch(action)
+    }
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(CocktailsIndex)
